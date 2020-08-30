@@ -72,26 +72,34 @@ jobs:
           CONFIG_LIBSODIUM_MINIMAL=y
           CONFIG_PACKAGE_ddns-scripts_aliyun=y
           CONFIG_PACKAGE_ddns-scripts_cloudflare.com-v4=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_DNS2SOCKS=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Simple_obfs=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
-          #CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=y
+          
+          ### tryied to disable ssr-plus by commenting these lines.
+          ### but it still there. 
+          ### Now let it be.  
+          CONFIG_PACKAGE_luci-app-ssr-plus=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_DNS2SOCKS=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Shadowsocks=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Simple_obfs=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
+          CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=y
+          
           CONFIG_PACKAGE_luci-app-uhttpd=y
-          #CONFIG_PACKAGE_luci-app-unblockmusic=y
-          #CONFIG_PACKAGE_luci-app-v2ray-server=y
-          #CONFIG_PACKAGE_luci-app-vssr=y
+          CONFIG_PACKAGE_luci-app-unblockmusic=y
+          CONFIG_PACKAGE_luci-app-v2ray-server=y
+          CONFIG_PACKAGE_luci-app-vssr=y
+          
           CONFIG_PACKAGE_luci-theme-argon=y
           CONFIG_PACKAGE_luci-theme-material=y
           CONFIG_PACKAGE_luci-theme-netgear=y
           CONFIG_PACKAGE_luci-app-unblockmusic=y
           CONFIG_PACKAGE_kmod-rtl8xxxu=y
-          #CONFIG_UnblockNeteaseMusic_Go=y
-          #CONFIG_UnblockNeteaseMusic_NodeJS=y
+          
+          CONFIG_UnblockNeteaseMusic_Go=y
+          CONFIG_UnblockNeteaseMusic_NodeJS=y
+          
           CONFIG_PACKAGE_luci-app-passwall=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
@@ -99,7 +107,9 @@ jobs:
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_GO=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_simple-obfs=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_v2ray-plugin=y
+          
           #CONFIG_PACKAGE_luci-app-openclash=y
+          
           CONFIG_PACKAGE_luci-app-zerotier=y
           # CONFIG_PACKAGE_luci-app-accesscontrol is not set
           # CONFIG_PACKAGE_luci-app-nlbwmon is not set
@@ -119,9 +129,13 @@ jobs:
           # CONFIG_PACKAGE_libopenssl-devcrypto is not set
           # CONFIG_V2RAY_COMPRESS_UPX is not set
           # CONFIG_PACKAGE_luci-app-oled=y
+          # CONFIG_PACKAGE_luci-app-sfe is not set
+          
+          # try to disable oled
+          CONFIG_PACKAGE_luci-app-oled=n
           CONFIG_PACKAGE_luci-app-adguardhome=y
           CONFIG_PACKAGE_luci-app-flowoffload=y
-          # CONFIG_PACKAGE_luci-app-sfe is not set
+          
           CONFIG_DROPBEAR_ECC=y
           CONFIG_DROPBEAR_ECC_FULL=y
           
@@ -132,6 +146,20 @@ jobs:
           CONFIG_PACKAGE_luci-i18n-wireguard-zh-cn=y
           CONFIG_PACKAGE_wireguard=y
           CONFIG_PACKAGE_wireguard-tools=y
+          
+          # try to add ttyd
+          CONFIG_PACKAGE_luci-app-ttyd=y
+          CONFIG_PACKAGE_luci-i18n-ttyd-zh-cn=y
+          CONFIG_PACKAGE_ttyd=y
+          
+          # for storage
+          CONFIG_PACKAGE_mount-utils=y
+          CONFIG_PACKAGE_TAR_BZIP2=y
+          CONFIG_PACKAGE_TAR_GZIP=y
+          CONFIG_PACKAGE_TAR_XZ=y
+          CONFIG_PACKAGE_TAR_ZSTD=y
+          CONFIG_PACKAGE_usbutils=y
+          
           ' >> configs/config_rk3328
           cd friendlywrt
           git config --local user.email "action@github.com" && git config --local user.name "GitHub Action"
@@ -229,5 +257,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@master
         with:
-          name: FriendlyWrt_NanoPi-R2S_abbottjlu_v19.07
+          name: FriendlyWrt_NanoPi-R2S_abbottjlu
           path: ./artifact/
