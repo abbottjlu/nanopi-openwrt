@@ -2,6 +2,7 @@ The ttyd app works.
 Wiregaurd works. 
 Deleted openclash stuff. 
 The rest of them is the same as klever1988's config file for R2S mini. 
+Not sure why fails to compile. 
 
 Failed to disable SSR. Now let it be. 
 Add ttyd package and some TAR stuff. 
