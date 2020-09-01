@@ -1,15 +1,20 @@
-name: r2s Lean openwrt minimal 
+name: r2s Lean mini
 
 on:
   push:
+    branches:
+      - master
     paths:
-      - 'CHANGELOG.md'
+      - '.github/workflows/r2s_lean_minimal.yml'
+#  schedule:
+#    - cron: '10 08 * * *'
 
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
+    
 
     steps:
 
@@ -73,9 +78,7 @@ jobs:
           CONFIG_PACKAGE_ddns-scripts_aliyun=y
           CONFIG_PACKAGE_ddns-scripts_cloudflare.com-v4=y
           
-          ### tryied to disable ssr-plus by commenting these lines.
-          ### but it still there. 
-          ### Now let it be.  
+          # ssr-plus stuff
           CONFIG_PACKAGE_luci-app-ssr-plus=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_DNS2SOCKS=y
@@ -86,20 +89,29 @@ jobs:
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=y
           
+          # WebUI
           CONFIG_PACKAGE_luci-app-uhttpd=y
+
+          # NeteasyMusic
           CONFIG_PACKAGE_luci-app-unblockmusic=y
+          CONFIG_UnblockNeteaseMusic_Go=y
+          CONFIG_UnblockNeteaseMusic_NodeJS=y
+
+          # V2ray
           CONFIG_PACKAGE_luci-app-v2ray-server=y
           CONFIG_PACKAGE_luci-app-vssr=y
-          
+
+          # theme
           CONFIG_PACKAGE_luci-theme-argon=y
           CONFIG_PACKAGE_luci-theme-material=y
           CONFIG_PACKAGE_luci-theme-netgear=y
-          CONFIG_PACKAGE_luci-app-unblockmusic=y
+
+          # duplicate
+          #CONFIG_PACKAGE_luci-app-unblockmusic=y
+          
           CONFIG_PACKAGE_kmod-rtl8xxxu=y
-          
-          CONFIG_UnblockNeteaseMusic_Go=y
-          CONFIG_UnblockNeteaseMusic_NodeJS=y
-          
+
+          #passwall stuff
           CONFIG_PACKAGE_luci-app-passwall=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Brook=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
@@ -107,18 +119,43 @@ jobs:
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Trojan_GO=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_simple-obfs=y
           CONFIG_PACKAGE_luci-app-passwall_INCLUDE_v2ray-plugin=y
+          CONFIG_PACKAGE_luci-app-passwall_INCLUDE_https_dns_proxy=n
           
+          # openclash 
           CONFIG_PACKAGE_luci-app-openclash=y
-          
+
+          # zerotier, maybe not work in mainland
           CONFIG_PACKAGE_luci-app-zerotier=y
- 
-          CONFIG_PACKAGE_luci-app-oled=n
+
+          # CONFIG_PACKAGE_luci-app-accesscontrol is not set
+          # CONFIG_PACKAGE_luci-app-nlbwmon is not set
+          # CONFIG_PACKAGE_nlbwmon is not set
+          # CONFIG_PACKAGE_luci-app-pppoe-relay is not set
+          # CONFIG_PACKAGE_luci-app-pppoe-server is not set
+          # CONFIG_PACKAGE_luci-app-pptp-vpnserver-manyusers is not set
+          # CONFIG_PACKAGE_luci-app-sqm is not set
+          # CONFIG_PACKAGE_luci-app-ssr-python-pro-server is not set
+          # CONFIG_PACKAGE_luci-app-v2ray-server is not set
+          # CONFIG_PACKAGE_luci-app-vsftpd is not set
+          # CONFIG_PACKAGE_luci-app-vssr_INCLUDE_ShadowsocksR_Socks is not set
+          # CONFIG_TARGET_ROOTFS_TARGZ is not set
+          # CONFIG_OPENSSL_ENGINE_BUILTIN_DEVCRYPTO is not set
+          # CONFIG_PACKAGE_kmod-crypto-authenc is not set
+          # CONFIG_PACKAGE_kmod-cryptodev is not set
+          # CONFIG_PACKAGE_libopenssl-devcrypto is not set
+          # CONFIG_V2RAY_COMPRESS_UPX is not set
+
+          # to set OLED modes 
+          CONFIG_PACKAGE_luci-app-oled=y
+
+          # block Ads? 
           CONFIG_PACKAGE_luci-app-adguardhome=y
+
           CONFIG_PACKAGE_luci-app-flowoffload=y
-          
+          # CONFIG_PACKAGE_luci-app-sfe is not set
           CONFIG_DROPBEAR_ECC=y
           CONFIG_DROPBEAR_ECC_FULL=y
-          
+
           ### try to add wireguard
           CONFIG_PACKAGE_kmod-wireguard=y
           CONFIG_PACKAGE_luci-app-wireguard=y
@@ -139,17 +176,19 @@ jobs:
           CONFIG_PACKAGE_TAR_XZ=y
           CONFIG_PACKAGE_TAR_ZSTD=y
           CONFIG_PACKAGE_usbutils=y
-          
           ' >> configs/config_rk3328
           cd friendlywrt
           git config --local user.email "action@github.com" && git config --local user.name "GitHub Action"
           git remote add upstream https://github.com/coolsnowwolf/openwrt && git fetch upstream
           git checkout upstream/lede-17.01 -b tmp
-
+          #git checkout 33f7cb735300bd9a099995236ed768c8925fec75 -- target/linux/sunxi/image/
           git rm README.md
           git commit -m 'reset'
           git checkout origin/master-v19.07.1
           git rebase adc1a9a3676b8d7be1b48b5aed185a94d8e42728^ --onto tmp -X theirs
+          #git revert 33abeff31cfb2ae58adf167c82bd36b5f56a5b1c -X ours || true
+          #rm -rf package/kernel/mt76/Makefile package/network/services/hostapd package/kernel/mac80211
+          #git checkout 0a395d6fd6c38c554709197ae3cd6315f143cd7a -- package/kernel/mt76/Makefile package/network/services/hostapd package/kernel/mac80211
           rm -f target/linux/rockchip-rk3328/patches-4.14/0001-net-thunderx-workaround-BGX-TX-Underflow-issue.patch target/linux/generic/hack-4.14/999-net-patch-linux-kernel-to-support-shortcut-fe.patch
           sed -i '/ipv6/,+3d' package/base-files/files/root/setup.sh
           git checkout upstream/lede-17.01 -- feeds.conf.default
@@ -157,7 +196,16 @@ jobs:
           cd package/lean/
           git clone https://github.com/NateLol/luci-app-oled
           git clone https://github.com/rufengsuixing/luci-app-adguardhome
-
+          #git clone https://github.com/jerrykuku/lua-maxminddb.git
+          #git clone https://github.com/jerrykuku/luci-app-vssr.git
+          #cd luci-app-vssr/root/etc/
+          #echo 'china_ssr.txt
+          #config/black.list
+          #config/white.list
+          #dnsmasq.oversea/oversea_list.conf
+          #dnsmasq.ssr/ad.conf
+          #dnsmasq.ssr/gfw_base.conf' | xargs rm
+          #cd ../../../
           rm -rf luci-theme-argon
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
           cd ../../
@@ -172,6 +220,16 @@ jobs:
           mv ../../scripts/check_wan4.sh package/base-files/files/usr/bin && sed -i '/exit/i\/bin/sh /usr/bin/check_wan4.sh &' package/base-files/files/etc/rc.local
           mv ../../scripts/autoupdate.sh package/base-files/files/root/au.sh && chmod +x package/base-files/files/root/au.sh
           echo -e '\nDYC Build\n' >> package/base-files/files/etc/banner
+          echo -e '\nModified by iamid0 to add ttyd and wireguard.\n' >> package/base-files/files/etc/banner
+
+      - name: Add OpenClash
+        run: |
+          git clone -b master https://github.com/vernesong/OpenClash.git 
+          mv OpenClash/luci-app-openclash friendlywrt-rk3328/friendlywrt/package
+          cd friendlywrt-rk3328/friendlywrt/package/base-files/files
+          mkdir -p etc/openclash/core && cd etc/openclash/core
+          curl -L https://github.com/vernesong/OpenClash/releases/download/Clash/clash-linux-armv8.tar.gz | tar zxf -
+          chmod +x clash
 
       - name: Add Passwall
         run: |
@@ -216,5 +274,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@master
         with:
-          name: FriendlyWrt_NanoPi-R2S_abbottjlu
+          name: FriendlyWrt_NanoPi-R2S_lean-mini-iamid0
           path: ./artifact/
